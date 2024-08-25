@@ -1,5 +1,5 @@
 [workspace]
-members = ["classifier", "classifier-io"]
+members = ["classifier", "classifier-io", "program"]
 resolver = "2"
 
 [workspace.dependencies]

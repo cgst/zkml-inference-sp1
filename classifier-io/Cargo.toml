@@ -1,0 +1,18 @@
+[package]
+name = "classifier-io"
+version = "0.1.0"
+edition = "2021"
+
+
+[dependencies]
+alloy-sol-types.workspace = true
+ndarray.workspace = true
+tiny-cid = "0.3"
+tiny-multihash = { version = "0.5", features = ["sha2"] }
+image = { version = "0.25", default-features = false, features = [
+    "png",
+    "jpeg",
+] }
+ipfs-unixfs = { version = "0.2.0", default-features = false }
+resize = { version = "0.8", default-features = false, features = ["no_std"] }
+rgb = { version = "0.8", default-features = false, features = ["argb"] }

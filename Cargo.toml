@@ -1,0 +1,10 @@
+[workspace]
+members = ["classifier", "classifier-io"]
+resolver = "2"
+
+[workspace.dependencies]
+alloy-sol-types = "0.7"
+classifier = { path = "./classifier" }
+classifier-io = { path = "./classifier-io" }
+ndarray = { version = "0.15", default-features = false }
+ndarray-npy = "0.8.1"

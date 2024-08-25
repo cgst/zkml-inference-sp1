@@ -1,0 +1,10 @@
+[package]
+version = "0.1.0"
+name = "program-tests"
+edition = "2021"
+
+[dev-dependencies]
+classifier-io.workspace = true
+classifier.workspace = true
+ndarray-npy.workspace = true
+tempfile = "3.12"

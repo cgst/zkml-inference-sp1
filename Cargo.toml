@@ -2,6 +2,7 @@
 members = ["classifier", "classifier-io", "program", "program-tests", "script"]
 resolver = "2"
 
+
 [workspace.dependencies]
 alloy-sol-types = "0.7"
 classifier = { path = "./classifier" }

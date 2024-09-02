@@ -1,7 +1,7 @@
 use alloy_sol_types::SolType;
 use clap::{Parser, ValueEnum};
 use classifier_io::{prepare_input_image, PublicValuesStruct};
-use sp1_sdk::{HashableKey, ProverClient, SP1Stdin};
+use sp1_sdk::{ProverClient, SP1Stdin};
 use tracing::instrument;
 
 /// The ELF (executable and linkable format) file for the Succinct RISC-V zkVM.
@@ -21,7 +21,6 @@ struct Args {
 enum Command {
     Execute,
     Prove,
-    VKey,
 }
 
 #[instrument(skip_all)]
@@ -40,7 +39,7 @@ fn execute(client: ProverClient, stdin: SP1Stdin, program_input: &[u8]) {
 
 #[instrument(skip_all)]
 fn prove(client: ProverClient, stdin: SP1Stdin) {
-    // Setup the program for proving.
+    // Set up the program for proving.
     let (pk, vk) = client.setup(PROGRAM_ELF);
     // Generate the proof.
     let proof = client
@@ -56,13 +55,8 @@ fn prove(client: ProverClient, stdin: SP1Stdin) {
     println!("{decoded:#?}");
 }
 
-fn print_vkey(client: ProverClient) {
-    let (_, vk) = client.setup(PROGRAM_ELF);
-    println!("{}", vk.bytes32());
-}
-
 fn main() {
-    // Setup the logger.
+    // Set up the logger.
     sp1_sdk::utils::setup_logger();
 
     // Parse the command line arguments.
@@ -80,7 +74,6 @@ fn main() {
     match args.command {
         Command::Execute => execute(client, stdin, &image_file_content),
         Command::Prove => prove(client, stdin),
-        Command::VKey => print_vkey(client),
     }
 }
 

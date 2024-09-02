@@ -1,42 +1,58 @@
-# ZK-ML Inference with SP1
+# zkML Inference with SP1
 
-The goal of this project is to demonstrate the use of [SP1](https://github.com/succinctlabs/sp1)
-to perform provable ML inference.
+Perform verifiable ML inference tasks (e.g., image classification) with [SP1](https://github.com/succinctlabs/sp1).
 
-The project consists of an SP1 program that receives an input image and emits:
+This project contains an SP1 program that receives an input image (JPEG, PNG, etc.) and outputs:
 
-  1. An [IPFS content identifier](https://docs.ipfs.tech/concepts/content-addressing/) (CID).
-  2. A class prediction using a simple MLP (multi-layer perceptron) model.
+  1. An image class prediction using a simple MLP (multi-layer perceptron) model.
+  2. An [IPFS content identifier](https://docs.ipfs.tech/concepts/content-addressing/) (CID).
 
 We use the [Succinct Prover Network](https://docs.succinct.xyz/generating-proofs/prover-network.html)
-to generate a cryptographic proof that binds the prediction to the IPFS CID. Thus, we can prove
-(cryptographically) that an image stored at that IPFS CID has a certain class prediction according
-to our model.
+to generate a cryptographic proof that binds the class prediction to the IPFS CID. Thus, we prove (cryptographically) that an IPFS image (e.g., an NFT) has a certain class prediction.
+Moreover, the proof can be verified onchain by an EVM app.
+
+## Sounds familiar?
+
+There are a few [other projects](https://github.com/worldcoin/awesome-zkml?tab=readme-ov-file#codebases) that
+do ML inference in ZK proofs. What's different about this one is we don't design or use ZK circuits
+explicitly. Instead, we use a general-purpose programming language (e.g., Rust) and leave it to
+SP1 to generate the ZK proofs.
+
+_**If you can write Rust, you can write ZKP programs!**_
 
 ## Application
 
-A potential use case is to perform basic computer vision tasks such as classification, recognition,
-transformations, etc. on IPFS-backed NFT images and verify the results onchain.
+Perform basic computer vision tasks such as classification, recognition, transformations, etc. on
+IPFS-backed NFT images and verify the results onchain. In this repo, we implement a simple
+image classifier based on the [Fashion MNIST](https://github.com/zalandoresearch/fashion-mnist)
+dataset, but other tasks can be implemented in a similar way.
+
+The IPFS CID acts both as a serving URI (e.g., what to display) and as a commitment of the image
+content. An onchain contract must match the NFT's `tokenURI()` property (e.g. `ipfs://...`) with
+the proof.
 
 SP1 can generate cryptographic proofs that are small in size and cheap to verify onchain with
-[`SP1Verifier`](https://github.com/succinctlabs/sp1-contracts/tree/main). EVM contracts can verify
-inference proofs (for ~400k gas) and match the NFT's `tokenURI()` property (e.g. `ipfs://...`).
+[`SP1Verifier`](https://github.com/succinctlabs/sp1-contracts/tree/main).
 
 ## Limitations
 
-This is a proof of concept with a toy model. It's really not useful for real-world
-applications. More capable vision models might be impractical to prove in this way.
+The toy model used here is inadequate for real-world applications. Larger and more capable vision
+models, on the other hand, might be impractical to implement this way.
+
+You must use Succinct's [Prover Network](https://docs.succinct.xyz/generating-proofs/prover-network.html)
+to generate proofs; it would be too slow to generate proofs locally with commodity hardware.
+
+The IPFS CID must be generated with the exact same specifications: v0 + DAG-PB + SHA2-256.
 
 ## Model
 
 We use a simple MLP (multi-layer perceptron) trained on the [Fashion MNIST](https://github.com/zalandoresearch/fashion-mnist)
-dataset. It can classify images into 10 classes (e.g. t-shirt, trouser, pullover, etc.). We
-replicate the model in Rust because it has to run inside the SP1 VM.
-
-![Fashion MNIST](https://github.com/zalandoresearch/fashion-mnist/raw/master/doc/img/fashion-mnist-sprite.png)
+dataset. It projects images to 10 classes (e.g. t-shirt, trouser, pullover, etc.).
 
 For simplicity, we use pre-trained model weights from [Hugging Face](https://huggingface.co/sadhaklal/mlp-fashion-mnist/tree/main).
 Training the model is outside the scope of this project.
+
+![Fashion MNIST](https://github.com/zalandoresearch/fashion-mnist/raw/master/doc/img/fashion-mnist-sprite.png)
 
 ## Requirements
 
@@ -66,14 +82,11 @@ PublicValuesStruct {
 }
 ```
 
-The image isn't uploaded to IPFS, and uploading isn't necessary for generating the proof. The
+The script doesn't upload to IPFS, and uploading isn't necessary to generate the proof. The
 content identifier (CID) is derived from the image file; should anyone upload the file to IPFS,
 the CID will be the same.
 
-### Generate a Proof
-
-Using Succinct's [Prover Network](https://docs.succinct.xyz/generating-proofs/prover-network.html)
-is generally much, much faster than generating a proof locally.
+### Prove
 
 ```sh
 export RUST_LOG=info
@@ -82,16 +95,13 @@ export SP1_PRIVATE_KEY=0x...
 SP1_PROVER=network cargo run --release -- prove --input-image examples/sneaker_0.jpg
 ```
 
-### Generate an EVM-Compatible (PLONK) Proof
+### Prove for EVM
 
-To generate a PLONK proof that is small enough to be verified on-chain and verifiable by the EVM:
+Generate a (PLONK) proof that can be verified onchain:
 
 ```sh
 SP1_PROVER=network cargo run --release -- evm --input-image examples/sneaker_0.jpg
 ```
-
-This command also generates a fixture that can be used to test the verification of SP1 zkVM proofs
-inside Solidity.
 
 To retrieve the `programVKey` for the on-chain contract, run the following command:
 

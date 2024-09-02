@@ -82,6 +82,8 @@ PublicValuesStruct {
 }
 ```
 
+See [table of class labels](https://github.com/zalandoresearch/fashion-mnist?tab=readme-ov-file#labels).
+
 The script doesn't upload to IPFS, and uploading isn't necessary to generate the proof. The
 content identifier (CID) is derived from the image file; should anyone upload the file to IPFS,
 the CID will be the same.
@@ -103,8 +105,12 @@ Generate a (PLONK) proof that can be verified onchain:
 SP1_PROVER=network cargo run --release -- evm --input-image examples/sneaker_0.jpg
 ```
 
-To retrieve the `programVKey` for the on-chain contract, run the following command:
+## Workspace
 
-```sh
-cargo run -- v-key
-```
+- `classifier`: implements MLP
+- `classifier-io`: preprocesses input image and generates IPFS CID
+- `program`: ZKP SP1 program
+- `program-tests`: integration tests for `program`
+- `script`: CLI entry point to execute and prove `program`
+- `examples`: example input images
+- `notebooks`: one-off Jupyter notebooks to export the model weights and inspect inputs

@@ -91,5 +91,5 @@ fn get_expected_label(image_file_content: &[u8]) -> u8 {
         classifier::INPUT_HEIGHT,
     )
     .unwrap();
-    classifier::predict_mlp2(input)
+    classifier::predict_mlp(input)
 }

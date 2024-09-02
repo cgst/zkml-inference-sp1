@@ -2,13 +2,11 @@ use ipfs_unixfs::file::adder::FileAdder;
 use tiny_cid::{Cid, Version, DAG_PROTOBUF};
 use tiny_multihash::{Code, MultihashCode};
 
-/// TODO: document assumptions:
-///  - v0
-///  - dag-pb
-///  - sha2-256
-pub fn generate_ipfs_cid_v0(file_content: &[u8]) -> String {
+/// Generate v0 IPFS CID from file content, assuming DAG-PB codec and SHA2-256 hashing algorithm.
+/// Under these assumptions, the CID is deterministic and ~unique per file.
+pub fn generate_ipfs_cid_v0(file_conten: &[u8]) -> String {
     let mut adder = FileAdder::default();
-    adder.push(file_content).0.for_each(|_| {}); // Must consume
+    adder.push(file_conten).0.for_each(|_| {}); // Consume
     let (_, unixfs_repr) = adder.finish().last().unwrap();
     let hash = Code::Sha2_256.digest(&unixfs_repr);
     let cid = Cid::new(Version::V0, DAG_PROTOBUF, hash).unwrap();

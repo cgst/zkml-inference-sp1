@@ -2,6 +2,7 @@ use ndarray::{prelude::*, ScalarOperand};
 use ndarray_npy::{ReadNpyError, ReadNpyExt, ReadableElement};
 use num_traits::Float;
 
+/// Fully-connected layer.
 #[derive(Debug)]
 pub struct Linear<S> {
     pub input_dim: usize,

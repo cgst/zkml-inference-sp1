@@ -1,4 +1,4 @@
-use classifier::{predict_mlp2, INPUT_HEIGHT as H, INPUT_WIDTH as W};
+use classifier::{predict_mlp, INPUT_HEIGHT as H, INPUT_WIDTH as W};
 use classifier_io::prepare_input_image;
 
 /// Reference: https://github.com/zalandoresearch/fashion-mnist?tab=readme-ov-file#labels
@@ -17,9 +17,9 @@ pub enum FashionMNISTLabel {
 }
 
 #[test]
-fn mlp2_predict_trouser() {
+fn mlp_predict_trouser() {
     assert_eq!(
-        predict_mlp2(
+        predict_mlp(
             prepare_input_image(include_bytes!("../fixtures/trouser_0.jpg"), W, H).unwrap()
         ),
         FashionMNISTLabel::Trouser as u8
@@ -27,9 +27,9 @@ fn mlp2_predict_trouser() {
 }
 
 #[test]
-fn mlp2_predict_sneaker() {
+fn mlp_predict_sneaker() {
     assert_eq!(
-        predict_mlp2(
+        predict_mlp(
             prepare_input_image(include_bytes!("../fixtures/sneaker_0.jpg"), W, H).unwrap()
         ),
         FashionMNISTLabel::Sneaker as u8
@@ -37,11 +37,9 @@ fn mlp2_predict_sneaker() {
 }
 
 #[test]
-fn mlp2_predict_tshirt() {
+fn mlp_predict_tshirt() {
     assert_eq!(
-        predict_mlp2(
-            prepare_input_image(include_bytes!("../fixtures/tshirt_0.jpg"), W, H).unwrap()
-        ),
+        predict_mlp(prepare_input_image(include_bytes!("../fixtures/tshirt_0.jpg"), W, H).unwrap()),
         FashionMNISTLabel::TShirt as u8
     );
 }

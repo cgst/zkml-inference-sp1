@@ -2,7 +2,11 @@ use image::ImageError;
 use ndarray::prelude::*;
 use rgb::{FromSlice, Gray};
 
-/// Load and preprocess an input image.
+/// Load and prepare an input image for inference.
+///   - Decode image (JPEG or PNG).
+///   - Resize to `width` x `height`.
+///   - Convert to grayscale.
+///   - Invert luminance.
 pub fn prepare_input_image(
     image_file_content: &[u8],
     width: usize,
